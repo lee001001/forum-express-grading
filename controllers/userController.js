@@ -26,12 +26,26 @@ const userController = {
               password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10), null)
             })
               .then(user => {
-                req.flash('success_message', '成功註冊帳號')
+                req.flash('success_messages', '成功註冊帳號')
                 return res.redirect('/signin')
               })
           }
         })
     }
+  },
+  signInPage: (req, res) => {
+    return res.render('signin')
+  },
+
+  signIn: (req, res) => {
+    req.flash('success_message', '你已經成功登入')
+    res.redirect('/restaurants')
+  },
+
+  logout: (req, res) => {
+    req.flash('success_messages', '登出成功！')
+    req.logout()
+    res.redirect('/signin')
   }
 
 }
