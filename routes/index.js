@@ -1,3 +1,4 @@
+const helpers = require('../_helpers')
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
 const restController = require('../controllers/restController.js')
@@ -7,16 +8,16 @@ const userController = require('../controllers/userController.js')
 module.exports = (app, passport) => {
   // 檢查使用者是否登入。如果沒有就導回登入頁
   const authenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
+    if (helpers.ensureAuthenticated(req)) {
       return next()
     }
     res.redirect('/signin')
   }
   // 檢查使用者是否為管理者身份
   const authenticatedAdmin = (req, res, next) => {
-    if (req.isAuthenticated()) {
-      if (req.user.isAdmin) { return next() }
-      return res.redirect('/')
+    // if(req.isAuthenticated)
+    if (helpers.ensureAuthenticated(req)) {
+      if (helpers.getUser(req).isAdmin) { return next() }
     }
     res.redirect('/signin')
   }
@@ -46,4 +47,8 @@ module.exports = (app, passport) => {
   app.get('/signin', userController.signInPage)
   app.post('/signin', passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true }), userController.signIn)
   app.get('/logout', userController.logout)
+
+  // 新建立User路由
+  app.get('/admin/users', authenticatedAdmin, adminController.getUsers)
+  app.put('/admin/users/:id/toggleAdmin', authenticatedAdmin, adminController.putUsers)
 }
