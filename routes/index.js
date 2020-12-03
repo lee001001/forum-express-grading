@@ -5,6 +5,7 @@ const restController = require('../controllers/restController.js')
 const adminController = require('../controllers/adminController.js')
 const userController = require('../controllers/userController.js')
 const categoryController = require('../controllers/categoryController.js')
+const commentController = require('../controllers/commentController')
 
 module.exports = (app, passport) => {
   // 檢查使用者是否登入。如果沒有就導回登入頁
@@ -31,6 +32,9 @@ module.exports = (app, passport) => {
 
   // 前台餐廳餐廳單一路由 資料
   app.get('/restaurants/:id', authenticated, restController.getRestaurant)
+
+  // 前台餐廳評論路由
+  app.post('/comments', authenticated, commentController.postComment)
 
   app.get('/admin', authenticatedAdmin, (req, res) => res.redirect('/admin/restaurants'))
   app.get('/admin/restaurants', authenticatedAdmin, adminController.getRestaurants)
