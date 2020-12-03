@@ -36,6 +36,9 @@ module.exports = (app, passport) => {
   // 前台餐廳評論路由
   app.post('/comments', authenticated, commentController.postComment)
 
+  // 管理員刪除餐廳評論
+  app.delete('/comments/:id', authenticatedAdmin, commentController.deleteComment)
+
   app.get('/admin', authenticatedAdmin, (req, res) => res.redirect('/admin/restaurants'))
   app.get('/admin/restaurants', authenticatedAdmin, adminController.getRestaurants)
 
