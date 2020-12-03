@@ -9,6 +9,20 @@ const categoryController = {
     }).then(categories => {
       return res.render('admin/categories', { categories: categories })
     })
+  },
+  postCategory: (req, res) => {
+    if (!req.body.name) {
+      req.flash('error_messages', 'name didn\'t exist')
+      return res.redirect('back')
+    } else {
+      return Category.create({
+        name: req.body.name
+      })
+        .then((category) => {
+          // category 沒有使用到 但方便查看
+          res.redirect('/admin/categories')
+        })
+    }
   }
 }
 module.exports = categoryController

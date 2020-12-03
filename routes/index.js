@@ -55,4 +55,5 @@ module.exports = (app, passport) => {
 
   // 建立 category 路由
   app.get('/admin/categories', authenticatedAdmin, categoryController.getCategories)
+  app.post('/admin/categories', authenticatedAdmin, categoryController.postCategory)
 }
