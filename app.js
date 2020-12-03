@@ -16,7 +16,10 @@ const port = process.env.PORT || 3000
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.engine('handlebars', handlebars())
+app.engine('handlebars', handlebars({
+  defaultLayout: 'main',
+  helpers: require('./config/handlebars-helpers')
+}))
 app.set('view engine', 'handlebars')
 // setup session and flash
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }))
