@@ -29,6 +29,9 @@ module.exports = (app, passport) => {
   // 在 /restaurants 底下則交給 restController.getRestaurants 來處理
   app.get('/restaurants', authenticated, restController.getRestaurants)
 
+  // 前台餐廳餐廳單一路由 資料
+  app.get('/restaurants/:id', authenticated, restController.getRestaurant)
+
   app.get('/admin', authenticatedAdmin, (req, res) => res.redirect('/admin/restaurants'))
   app.get('/admin/restaurants', authenticatedAdmin, adminController.getRestaurants)
 
