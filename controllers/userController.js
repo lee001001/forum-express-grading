@@ -1,8 +1,6 @@
 const bcrypt = require('bcryptjs')
-const multer = require('multer')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
-const fs = require('fs')
 const db = require('../models')
 const User = db.User
 
@@ -21,13 +19,14 @@ const userController = {
       User.findOne({ where: { email: req.body.email } })
         .then(user => {
           if (user) {
-            req.flash('error_message', '信箱重複')
+            req.flash('error_messages', '信箱重複')
             return res.redirect('/signup')
           } else {
             User.create({
               name: req.body.name,
               email: req.body.email,
-              password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10), null)
+              password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10), null),
+              image: null
             })
               .then(user => {
                 req.flash('success_messages', '成功註冊帳號')
@@ -42,7 +41,7 @@ const userController = {
   },
 
   signIn: (req, res) => {
-    req.flash('success_message', '你已經成功登入')
+    req.flash('success_messages', '你已經成功登入')
     res.redirect('/restaurants')
   },
 

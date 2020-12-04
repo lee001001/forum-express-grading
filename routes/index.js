@@ -21,6 +21,7 @@ module.exports = (app, passport) => {
     if (helpers.ensureAuthenticated(req)) {
       if (helpers.getUser(req).isAdmin) { return next() }
     }
+    req.flash('error_messages', '請先登入')
     res.redirect('/signin')
   }
 
@@ -64,11 +65,9 @@ module.exports = (app, passport) => {
   app.put('/admin/users/:id/toggleAdmin', authenticatedAdmin, adminController.putUsers)
 
   // 新建 user's profile 路由
-  app.get('/users/:id', authenticatedAdmin, userController.getUser)
-
-  // 修改 profile頁面
-  app.get('/users/:id/edit', authenticatedAdmin, userController.editUser)
-  app.put('/users/:id', authenticatedAdmin, upload.single('image'), userController.putUser)
+  app.get('/users/:id', authenticated, userController.getUser)
+  app.get('/users/:id/edit', authenticated, userController.editUser)
+  app.put('/users/:id', authenticated, upload.single('image'), userController.putUser)
 
   // 建立 category 路由
   app.get('/admin/categories', authenticatedAdmin, categoryController.getCategories)
