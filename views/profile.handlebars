@@ -14,11 +14,30 @@
       <p>
         {{user.email}} <br>
       </p>
+
+      <p>
+        <!--{{restaurantCount}}間已經評論餐廳 -->
+      </p>
       <button type="button" class="btn btn-link">
         <a href="/users/{{user.id}}/edit">
           Edit
         </a>
       </button>
     </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      評論{{restaurantCounts}}間餐廳
+    </div>
+    {{#restaurants}}
+    <div class="m-3" style="display: inline-block">
+      <a href="/restaurants/{{this.id}}">
+        <img
+          src="{{#if this.image}}{{this.image}}{{else}}https://p.kindpng.com/picc/s/21-216273_restaurant-logo-big-image-restaurant-logo-png-free.png{{/if}}"
+          alt="" style="width: 100px">
+      </a>
+    </div>
+    {{/restaurants}}
   </div>
 </div>

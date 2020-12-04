@@ -3,6 +3,8 @@ const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const db = require('../models')
 const User = db.User
+const Restaurant = db.Restaurant
+const Comment = db.Comment
 
 const userController = {
   signUpPage: (req, res) => {
@@ -52,10 +54,31 @@ const userController = {
   },
   getUser: (req, res) => {
     req.flash('success_messages', '成功進入Profile')
-    return User.findByPk(req.params.id)
+    const UserId = Number(req.params.id)
+    return User.findByPk(UserId)
       .then(user => {
-        console.log(user.toJSON())
-        return res.render('profile', { user: user.toJSON() })
+        // 計算 comment 的過餐廳
+        Comment.findAndCountAll({
+          include: Restaurant,
+          where: { UserId },
+          raw: true,
+          nest: true
+        })
+          .then(result => {
+            // user 曾經評論過得餐廳
+            const restaurantCounts = result.count || 0
+            // 取得所有餐廳資料
+            const restaurants = result.rows.map(comment => comment.Restaurant)
+            // 取得 restaurants 中的id
+            const uniqueRests = Array.from(new Set(restaurants.map(item => item.id)))
+              .map(id => restaurants.find(item => item.id === id))
+            console.log(restaurants)
+            return res.render('profile', {
+              user: user.toJSON(),
+              restaurantCounts,
+              restaurants: uniqueRests
+            })
+          })
       })
   },
   editUser: (req, res) => {
