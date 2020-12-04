@@ -63,6 +63,13 @@ module.exports = (app, passport) => {
   app.get('/admin/users', authenticatedAdmin, adminController.getUsers)
   app.put('/admin/users/:id/toggleAdmin', authenticatedAdmin, adminController.putUsers)
 
+  // 新建 user's profile 路由
+  app.get('/users/:id', authenticatedAdmin, userController.getUser)
+
+  // 修改 profile頁面
+  app.get('/users/:id/edit', authenticatedAdmin, userController.editUser)
+  app.put('/users/:id', authenticatedAdmin, upload.single('image'), userController.putUser)
+
   // 建立 category 路由
   app.get('/admin/categories', authenticatedAdmin, categoryController.getCategories)
   app.post('/admin/categories', authenticatedAdmin, categoryController.postCategory)

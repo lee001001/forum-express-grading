@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 img">
+      {{#if user.image}}
+      <img src="{{user.image}}" alt="" class="img-rounded" style="width: 250px;margin-bottom:25px;">
+      {{else}}
+      <img src="https://lorempixel" alt="">
+      {{/if}}
+    </div>
+    <div class=" col-md-6 details">
+      <blockquote>
+        <h5>{{user.name}}</h5>
+      </blockquote>
+      <p>
+        {{user.email}} <br>
+      </p>
+      <button type="button" class="btn btn-link">
+        <a href="/users/{{user.id}}/edit">
+          Edit
+        </a>
+      </button>
+    </div>
+  </div>
+</div>
