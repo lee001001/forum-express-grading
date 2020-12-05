@@ -32,8 +32,11 @@ module.exports = (app, passport) => {
   app.get('/restaurants', authenticated, restController.getRestaurants)
 
   app.get('/restaurants/feeds', authenticated, restController.getFeeds)
+
   // 前台餐廳餐廳單一路由 資料
   app.get('/restaurants/:id', authenticated, restController.getRestaurant)
+
+  app.get('/restaurants/:id/dashboard', authenticated, restController.getDashboard)
 
   // 前台餐廳評論路由
   app.post('/comments', authenticated, commentController.postComment)

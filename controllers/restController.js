@@ -91,6 +91,36 @@ const restController = {
         })
       })
     })
+  },
+  getDashboard: (req, res) => {
+    // step1: 先尋找餐廳id,尋找單一餐廳資料
+    const RestaurantId = req.params.id
+    return Restaurant.findByPk(RestaurantId, {
+      include: [
+        Category,
+        {
+          model: Comment, include: [User]
+        }]
+    })
+      .then(restaurant => {
+        // 進入到 Comment 找到 自己RestaurantId的次數
+
+        Comment.findAndCountAll({
+          include: Restaurant,
+          where: { RestaurantId },
+          raw: true,
+          nest: true
+        })
+          .then(result => {
+            // 計算 comment 的總數量
+            console.log('result.count', result.count)
+            const commentCount = result.count
+            res.render('dashboard', {
+              restaurant: restaurant.toJSON(),
+              commentCount: commentCount
+            })
+          })
+      })
   }
 }
 
