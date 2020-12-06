@@ -103,8 +103,9 @@ const restController = {
         }]
     })
       .then(restaurant => {
+        restaurant.viewCounts = restaurant.viewCounts + 1
+        restaurant.save()
         // 進入到 Comment 找到 自己RestaurantId的次數
-
         Comment.findAndCountAll({
           include: Restaurant,
           where: { RestaurantId },
@@ -113,6 +114,7 @@ const restController = {
         })
           .then(result => {
             // 計算 comment 的總數量
+
             console.log('result.count', result.count)
             const commentCount = result.count
             res.render('dashboard', {
