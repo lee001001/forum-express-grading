@@ -33,7 +33,7 @@ const restController = {
       const prev = page - 1 < 1 ? 1 : page - 1
       const next = page + 1 > pages ? pages : page + 1
       // clear up restaurants data
-      console.log(result)
+
       const data = result.rows.map(r => ({
         ...r.dataValues,
         description: r.dataValues.description.substring(0, 50),
@@ -65,8 +65,11 @@ const restController = {
           model: Comment, include: [User]
         }]
     }).then(restaurant => {
-      return res.render('restaurant', {
-        restaurant: restaurant.toJSON()
+      restaurant.viewCounts += 1
+      restaurant.save().then(restaurant => {
+        return res.render('restaurant', {
+          restaurant: restaurant.toJSON()
+        })
       })
     })
   },
@@ -103,25 +106,10 @@ const restController = {
         }]
     })
       .then(restaurant => {
-        restaurant.viewCounts = restaurant.viewCounts + 1
-        restaurant.save()
         // 進入到 Comment 找到 自己RestaurantId的次數
-        Comment.findAndCountAll({
-          include: Restaurant,
-          where: { RestaurantId },
-          raw: true,
-          nest: true
+        res.render('dashboard', {
+          restaurant: restaurant.toJSON()
         })
-          .then(result => {
-            // 計算 comment 的總數量
-
-            console.log('result.count', result.count)
-            const commentCount = result.count
-            res.render('dashboard', {
-              restaurant: restaurant.toJSON(),
-              commentCount: commentCount
-            })
-          })
       })
   }
 }
