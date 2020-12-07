@@ -44,6 +44,9 @@ module.exports = (app, passport) => {
   // 管理員刪除餐廳評論
   app.delete('/comments/:id', authenticatedAdmin, commentController.deleteComment)
 
+  app.post('/favorite/:restaurantId', authenticated, userController.addFavorite)
+  app.delete('/favorite/:restaurantId', authenticated, userController.removeFavorite)
+
   app.get('/admin', authenticatedAdmin, (req, res) => res.redirect('/admin/restaurants'))
   app.get('/admin/restaurants', authenticatedAdmin, adminController.getRestaurants)
 
