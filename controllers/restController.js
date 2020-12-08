@@ -68,10 +68,12 @@ const restController = {
           model: Comment, include: [User]
         }]
     }).then(restaurant => {
+      const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(req.user.id) // 找出收藏此餐廳的 user
       restaurant.viewCounts = restaurant.viewCounts + 1
       restaurant.save().then(restaurant => {
         res.render('restaurant', {
-          restaurant: restaurant.toJSON()
+          restaurant: restaurant.toJSON(),
+          isFavorited: isFavorited //  將資料傳到前端
         })
       })
     })
