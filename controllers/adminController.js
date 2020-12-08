@@ -5,6 +5,7 @@ const db = require('../models')
 const User = db.User
 const Restaurant = db.Restaurant
 const Category = db.Category
+const Comment = db.Comment
 
 const adminController = {
   getRestaurants: (req, res) => {
@@ -37,7 +38,7 @@ const adminController = {
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
       imgur.upload(file.path, (err, img) => {
-        if (err) return console.log(err)
+        if (err) return console.log('Error:', err)
         return Restaurant.create({
           name: req.body.name,
           tel: req.body.tel,
@@ -102,7 +103,7 @@ const adminController = {
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
       imgur.upload(file.path, (err, img) => {
-        if (err) return console.log(err)
+        if (err) return console.log('Erroe:', err)
         return Restaurant.findByPk(req.params.id)
           .then((restaurant) => {
             restaurant.update({

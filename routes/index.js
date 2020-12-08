@@ -20,35 +20,37 @@ module.exports = (app, passport) => {
     // if(req.isAuthenticated)
     if (helpers.ensureAuthenticated(req)) {
       if (helpers.getUser(req).isAdmin) { return next() }
+      return res.redirect('/')
     }
-    req.flash('error_messages', '請先登入')
+    res.redirect('/signin')
+  }
+
+  const authenticatedUser = (req, res, next) => {
+    if (helpers.ensureAuthenticated(req)) {
+      if (helpers.getUser(req).id === Number(req.params.id)) return next()
+      return res.redirect('back')
+    }
     res.redirect('/signin')
   }
 
   // 如果使用者訪問首頁，就導向 /restaurants 的頁面
   app.get('/', authenticated, (req, res) => res.redirect('/restaurants'))
-
   // 在 /restaurants 則交給 restController.getRestaurants 來處理
   app.get('/restaurants', authenticated, restController.getRestaurants)
-
   app.get('/restaurants/feeds', authenticated, restController.getFeeds)
 
   // 前台餐廳餐廳單一路由 資料
   app.get('/restaurants/:id', authenticated, restController.getRestaurant)
-
   app.get('/restaurants/:id/dashboard', authenticated, restController.getDashboard)
 
   // 前台餐廳評論路由
   app.post('/comments', authenticated, commentController.postComment)
-
   // 管理員刪除餐廳評論
   app.delete('/comments/:id', authenticatedAdmin, commentController.deleteComment)
 
-  app.post('/favorite/:restaurantId', authenticated, userController.addFavorite)
-  app.delete('/favorite/:restaurantId', authenticated, userController.removeFavorite)
-
-  app.post('/like/:restaurantId', authenticated, userController.addLike)
-  app.delete('/like/:restaurantId', authenticated, userController.unLike)
+  app.get('/users/:id', authenticated, userController.getUser)
+  app.get('/users/:id/edit', authenticatedUser, userController.editUser)
+  app.put('/users/:id', authenticatedUser, upload.single('image'), userController.putUser)
 
   app.get('/admin', authenticatedAdmin, (req, res) => res.redirect('/admin/restaurants'))
   app.get('/admin/restaurants', authenticatedAdmin, adminController.getRestaurants)
@@ -63,28 +65,22 @@ module.exports = (app, passport) => {
 
   app.delete('/admin/restaurants/:id', authenticatedAdmin, adminController.deleteRestaurant)
 
+  // 新建立User路由
+
+  app.get('/admin/users', authenticatedAdmin, adminController.getUsers)
+  app.put('/admin/users/:id/toggleAdmin', authenticatedAdmin, adminController.putUsers)
+
+  // 建立 category 路由
+  app.get('/admin/categories', authenticatedAdmin, categoryController.getCategories)
+  app.post('/admin/categories', authenticatedAdmin, categoryController.postCategory)
+  app.get('/admin/categories/:id', authenticatedAdmin, categoryController.getCategories)
+  app.put('/admin/categories/:id', authenticatedAdmin, categoryController.putCategory)
+  app.delete('/admin/categories/:id', authenticatedAdmin, categoryController.deleteCategory)
+
   app.get('/signup', userController.signUpPage)
   app.post('/signup', userController.signUp)
 
   app.get('/signin', userController.signInPage)
   app.post('/signin', passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true }), userController.signIn)
   app.get('/logout', userController.logout)
-
-  // 新建立User路由
-  app.get('/admin/users', authenticatedAdmin, adminController.getUsers)
-  app.put('/admin/users/:id/toggleAdmin', authenticatedAdmin, adminController.putUsers)
-
-  // 新建 user's profile 路由
-  app.get('/users/:id', authenticated, userController.getUser)
-  app.get('/users/:id/edit', authenticated, userController.editUser)
-  app.put('/users/:id', authenticated, upload.single('image'), userController.putUser)
-
-  // 建立 category 路由
-  app.get('/admin/categories', authenticatedAdmin, categoryController.getCategories)
-  app.post('/admin/categories', authenticatedAdmin, categoryController.postCategory)
-
-  app.get('/admin/categories/:id', authenticatedAdmin, categoryController.getCategories)
-  app.put('/admin/categories/:id', authenticatedAdmin, categoryController.putCategory)
-
-  app.delete('/admin/categories/:id', authenticatedAdmin, categoryController.deleteCategory)
 }

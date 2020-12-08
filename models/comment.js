@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       // define association here
-      Comment.belongsTo(models.Restaurant)
       Comment.belongsTo(models.User)
+      Comment.belongsTo(models.Restaurant)
     }
   };
   Comment.init({
