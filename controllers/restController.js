@@ -33,7 +33,6 @@ const restController = {
       const prev = page - 1 < 1 ? 1 : page - 1
       const next = page + 1 > pages ? pages : page + 1
       // clear up restaurants data
-      console.log(result)
       const data = result.rows.map(r => ({
         ...r.dataValues,
         description: r.dataValues.description.substring(0, 50),
@@ -58,71 +57,53 @@ const restController = {
   },
   // 單一餐廳的資訊
   getRestaurant: (req, res) => {
-    return Restaurant.findByPk(req.params.id, {
+    Restaurant.findByPk(req.params.id, {
       include: [
         Category,
         {
           model: Comment, include: [User]
         }]
     }).then(restaurant => {
-      return res.render('restaurant', {
-        restaurant: restaurant.toJSON()
+      restaurant.viewCounts = restaurant.viewCounts + 1
+      restaurant.save().then(restaurant => {
+        res.render('restaurant', {
+          restaurant: restaurant.toJSON()
+        })
       })
     })
   },
   getFeeds: (req, res) => {
-    return Restaurant.findAll({
-      limit: 10,
-      raw: true,
-      nest: true,
-      order: [['createdAt', 'DESC']],
-      include: [Category]
-    }).then(restaurants => {
+    return Promise.all([
+      Restaurant.findAll({
+        limit: 10,
+        raw: true,
+        nest: true,
+        order: [['createdAt', 'DESC']],
+        include: [Category]
+      }),
       Comment.findAll({
         limit: 10,
         raw: true,
         nest: true,
         order: [['createdAt', 'DESC']],
         include: [User, Restaurant]
-      }).then(comments => {
-        return res.render('feeds', {
-          restaurants: restaurants,
-          comments: comments
-        })
+      })
+    ]).then(([restaurants, comments]) => {
+      return res.render('feeds', {
+        restaurants: restaurants,
+        comments: comments
       })
     })
   },
   getDashboard: (req, res) => {
-    // step1: 先尋找餐廳id,尋找單一餐廳資料
-    const RestaurantId = req.params.id
-    return Restaurant.findByPk(RestaurantId, {
+    return Restaurant.findByPk(req.params.id, {
       include: [
         Category,
-        {
-          model: Comment, include: [User]
-        }]
+        { model: Comment, include: [User] }
+      ]
+    }).then(restaurant => {
+      return res.render('dashboard', { restaurant: restaurant.toJSON() })
     })
-      .then(restaurant => {
-        restaurant.viewCounts = restaurant.viewCounts + 1
-        restaurant.save()
-        // 進入到 Comment 找到 自己RestaurantId的次數
-        Comment.findAndCountAll({
-          include: Restaurant,
-          where: { RestaurantId },
-          raw: true,
-          nest: true
-        })
-          .then(result => {
-            // 計算 comment 的總數量
-
-            console.log('result.count', result.count)
-            const commentCount = result.count
-            res.render('dashboard', {
-              restaurant: restaurant.toJSON(),
-              commentCount: commentCount
-            })
-          })
-      })
   }
 }
 

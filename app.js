@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== 'production') {
 const session = require('express-session')
 const passport = require('./config/passport')
 const app = express()
-const port = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -36,9 +36,9 @@ app.use((req, res, next) => {
   next()
 })
 
-app.listen(port, () => {
+app.listen(PORT, () => {
   db.sequelize.sync()
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Example app listening at http://localhost:${PORT}`)
 })
 
 require('./routes')(app, passport)

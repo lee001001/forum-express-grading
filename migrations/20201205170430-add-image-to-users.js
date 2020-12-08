@@ -9,7 +9,8 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
     await queryInterface.addColumn('Users', 'image', {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      defaultValue: 'http://lorempixel.com/output/abstract-q-c-640-480-2.jpg'
     })
   },
 

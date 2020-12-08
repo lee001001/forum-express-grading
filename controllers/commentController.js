@@ -3,23 +3,32 @@ const Comment = db.Comment
 
 const commentController = {
   postComment: (req, res) => {
-    return Comment.create({
-      text: req.body.text,
-      RestaurantId: req.body.restaurantId,
-      UserId: req.user.id
-    })
-      .then((comment) => {
-        res.redirect(`/restaurants/${req.body.restaurantId}`)
+    const RestaurantId = Number(req.query.restaurantId)
+    const UserId = req.user.id
+    const text = req.body.text
+    if (!RestaurantId) return res.redirect('back')
+    if (!text.trim()) {
+      req.flash('error_messages', 'comment shouldn\'t be empty')
+      return res.redirect('back')
+    }
+
+    return Comment.create({ text, RestaurantId, UserId })
+      .then(() => {
+        req.flash('success_messages', 'successfully create new comment')
+        return res.redirect('back')
       })
   },
   deleteComment: (req, res) => {
-    return Comment.findByPk(req.params.id)
+    Comment.findByPk(req.params.id)
       .then((comment) => {
-        comment.destroy()
-          .then((comment) => {
-            res.redirect(`/restaurants/${comment.RestaurantId}`)
+        if (!comment) return res.redirect('back')
+        return comment.destroy()
+          .then(() => {
+            req.flash('success_messages', 'Successfully delete comment.')
+            return res.redirect('back')
           })
       })
+      .catch(error => console.log(error))
   }
 }
 
