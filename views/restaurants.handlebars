@@ -42,7 +42,7 @@
         <form action="/favorite/{{this.id}}" method="POST"><button type="submit" class="btn btn-primary">加到最愛</button>
         </form>
         {{/if}}
-        {{#if this.isLiked }}
+        {{#if isLiked}}
         <form action="/like/{{this.id}}?_method=DELETE" method="POST"><button type="submit"
             class="btn btn-danger">Dislike</button></form>
         {{else}}
@@ -54,8 +54,8 @@
   </div>
   {{/each}}
 </div>
-<br />
-<br />
+
+
 <!-- Pagination -->
 <nav aria-label="Page navigation example">
   <ul class="pagination">

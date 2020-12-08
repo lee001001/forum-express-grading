@@ -9,12 +9,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       UserId: {
-        type: Sequelize.INTEGER,
-        references: { model: 'users', key: 'id' }
+        allowNull: false,
+        type: Sequelize.INTEGER
       },
       RestaurantId: {
-        type: Sequelize.INTEGER,
-        references: { model: 'restaurants', key: 'id' }
+        allowNull: false,
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,

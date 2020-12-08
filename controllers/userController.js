@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
-const helper = require('../_helpers')
+const helpers = require('../_helpers')
 const db = require('../models')
 const User = db.User
 const Restaurant = db.Restaurant
@@ -128,7 +128,7 @@ const userController = {
   },
   addFavorite: (req, res) => {
     return Favorite.create({
-      UserId: req.user.id,
+      UserId: helpers.getUser(req).id,
       RestaurantId: req.params.restaurantId
     })
       .then((restaurant) => {
@@ -150,28 +150,25 @@ const userController = {
       })
   },
   addLike: (req, res) => {
-    const UserId = helper.getUser(req).id
-    const RestaurantId = req.params.restaurantId
-    Like.create({
-      UserId,
-      RestaurantId
+    return Like.create({
+      UserId: helpers.getUser(req).id,
+      RestaurantId: req.params.restaurantId
     })
-      .then(() => {
-        res.redirect('back')
+      .then((restaurant) => {
+        return res.redirect('back')
       })
   },
   unLike: (req, res) => {
-    const UserId = helper.getUser(req).id
-    const RestaurantId = req.params.restaurantId
-    Favorite.findOne({
+    return Like.findOne({
       where: {
-        UserId, RestaurantId
+        UserId: helpers.getUser(req).id,
+        RestaurantId: req.params.restaurantId
       }
     })
       .then((like) => {
         like.destroy()
-          .then(() => {
-            res.redirect('back')
+          .then((restaurant) => {
+            return res.redirect('back')
           })
       })
   }
