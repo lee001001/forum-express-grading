@@ -54,6 +54,12 @@ module.exports = (app, passport) => {
   app.post('/like/:restaurantId', authenticated, userController.addLike)
   app.delete('/like/:restaurantId', authenticated, userController.unLike)
 
+  app.post('/following/:userId', authenticated, userController.addFollowing)
+  app.delete('/following/:userId', authenticated, userController.removeFollowing)
+
+  // 美食達人路由
+  app.get('/users/top', authenticated, userController.getTopUser)
+
   app.get('/users/:id', authenticated, userController.getUser)
   app.get('/users/:id/edit', authenticatedUser, userController.editUser)
   app.put('/users/:id', authenticatedUser, upload.single('image'), userController.putUser)
