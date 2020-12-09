@@ -85,6 +85,33 @@ const restController = {
       })
     })
   },
+  // 人氣餐廳
+  getTopRestaurant: (req, res) => {
+    // 撈出所有 Restauranr 與 favorited 資料
+    return Restaurant.findAll({
+      include: [
+        { model: User, as: 'FavoritedUsers' }
+      ]
+    }).then(restaurants => {
+      // console.log('restaurants: ', restaurants)
+      // 整理 restaurants 資料
+      restaurants = restaurants.map(r => ({
+        ...r.dataValues,
+        // 計算喜歡餐廳的users數量
+        FavoritedUsersCount: r.FavoritedUsers.length,
+
+        description: r.description.substring(0, 50),
+        // 判斷目使用者是否喜歡該 餐廳 物
+        isFavorited: r.FavoritedUsers.map(d => d.id).includes(req.user.id)
+
+      }))
+      // 依追蹤者人數排序清單
+      restaurants = restaurants.sort((a, b) => b.FavoriteCount - a.FavoriteCount).slice(0, 10)
+      console.log('FavoriteCount', restaurants.FavoritedUsersCount)
+      return res.render('topRestaurant', { restaurants: restaurants })
+    })
+  },
+
   getFeeds: (req, res) => {
     return Promise.all([
       Restaurant.findAll({

@@ -39,6 +39,8 @@ module.exports = (app, passport) => {
   app.get('/restaurants', authenticated, restController.getRestaurants)
   app.get('/restaurants/feeds', authenticated, restController.getFeeds)
 
+  // 人氣餐廳
+  app.get('/restaurants/top', authenticated, restController.getTopRestaurant)
   // 前台餐廳餐廳單一路由 資料
   app.get('/restaurants/:id', authenticated, restController.getRestaurant)
   app.get('/restaurants/:id/dashboard', authenticated, restController.getDashboard)
@@ -53,9 +55,6 @@ module.exports = (app, passport) => {
 
   app.post('/like/:restaurantId', authenticated, userController.addLike)
   app.delete('/like/:restaurantId', authenticated, userController.unLike)
-
-  app.post('/following/:userId', authenticated, userController.addFollowing)
-  app.delete('/following/:userId', authenticated, userController.removeFollowing)
 
   // 美食達人路由
   app.get('/users/top', authenticated, userController.getTopUser)
