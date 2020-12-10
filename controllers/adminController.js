@@ -1,6 +1,6 @@
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
-
+const adminService = require('../services/adminService.js')
 const db = require('../models')
 const User = db.User
 const Restaurant = db.Restaurant
@@ -9,13 +9,8 @@ const Comment = db.Comment
 
 const adminController = {
   getRestaurants: (req, res) => {
-    return Restaurant.findAll({
-      raw: true,
-      nest: true,
-      include: [Category] // 新增Category資料到後台
-    }).then(restaurants => {
-      console.log(restaurants)
-      return res.render('admin/restaurants', { restaurants: restaurants })
+    adminService.getRestaurants(req, res, (data) => {
+      return res.render('admin/restaurants', data)
     })
   },
   createRestaurant: (req, res) => {
