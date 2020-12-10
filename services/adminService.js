@@ -8,6 +8,17 @@ const adminService = {
     return Restaurant.findAll({ raw: true, nest: true, include: [Category] }).then(restaurants => {
       callback({ restaurants: restaurants })
     })
+  },
+  getRestaurant: (req, res, callback) => {
+    // 餐廳單一頁面看見分類
+    return Restaurant.findByPk(req.params.id, {
+      include: [Category]
+    }).then(restaurant => {
+      //  console.log(restaurant.toJSON())
+      //  console.log(restaurant)
+      callback({ restaurant: restaurant.toJSON() })
+    })
   }
 }
+
 module.exports = adminService
