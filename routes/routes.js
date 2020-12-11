@@ -7,11 +7,11 @@ const userController = require('../controllers/userController.js')
 const categoryController = require('../controllers/categoryController.js')
 const commentController = require('../controllers/commentController')
 
+const passport = require('../config/passport')
+
 const helpers = require('../_helpers')
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
-
-const passport = require('../config/passport')
 
 // 檢查使用者是否登入。如果沒有就導回登入頁
 const authenticated = (req, res, next) => {
