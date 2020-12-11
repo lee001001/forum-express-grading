@@ -26,12 +26,12 @@ const adminService = {
     return Restaurant.findByPk(req.params.id)
       .then((restaurant) => {
         restaurant.destroy()
-          .then((restaurant) => {
+          .then(() => {
             callback({ status: 'success', message: '' })
           })
       })
   },
-  postRestaurant: (req, res) => {
+  postRestaurant: (req, res, callback) => {
     if (!req.body.name) {
       return callback({ status: 'error', message: "name didn't exist" })
     }
@@ -49,7 +49,7 @@ const adminService = {
           description: req.body.description,
           image: file ? img.data.link : null,
           CategoryId: req.body.categoryId
-        }).then((restaurant) => {
+        }).then(() => {
           callback({ status: 'success', message: 'restaurant was successfully created' })
         })
       })
@@ -62,9 +62,53 @@ const adminService = {
         description: req.body.description,
         image: null,
         CategoryId: req.body.categoryId
-      }).then((restaurant) => {
+      }).then(() => {
         callback({ status: 'success', message: 'restaurant was successfully created' })
       })
+    }
+  },
+  putRestaurant: (req, res, callback) => {
+    if (!req.body.name) {
+      return callback({ status: 'error', message: "name didn't exist" })
+    }
+
+    const { file } = req
+    if (file) {
+      imgur.setClientID(IMGUR_CLIENT_ID)
+      imgur.upload(file.path, (err, img) => {
+        if (err) return callback({ status: 'error', message: "file didn't exist" })
+        return Restaurant.findByPk(req.params.id)
+          .then((restaurant) => {
+            restaurant.update({
+              name: req.body.name,
+              tel: req.body.tel,
+              address: req.body.address,
+              opening_hours: req.body.opening_hours,
+              description: req.body.description,
+              image: file ? img.data.link : restaurant.image,
+              CategoryId: req.body.categoryId
+            })
+              .then(() => {
+                callback({ status: 'success', message: 'restaurant was successfully updata' })
+              })
+          })
+      })
+    } else {
+      return Restaurant.findByPk(req.params.id)
+        .then((restaurant) => {
+          restaurant.update({
+            name: req.body.name,
+            tel: req.body.tel,
+            address: req.body.address,
+            opening_hours: req.body.opening_hours,
+            description: req.body.description,
+            image: restaurant.image,
+            CategoryId: req.body.categoryId
+          })
+            .then(() => {
+              callback({ status: 'success', message: 'restaurant was successfully created' })
+            })
+        })
     }
   }
 }

@@ -18,6 +18,8 @@ router.get('/admin/categories', categoryController.getCategories)
 // 定義路由
 router.post('/admin/restaurants', upload.single('image'), adminController.postRestaurant)
 
+router.put('/admin/restaurants/:id', upload.single('image'), adminController.putRestaurant)
+
 router.delete('/admin/restaurants/:id', adminController.deleteRestaurant)
 
 module.exports = router
