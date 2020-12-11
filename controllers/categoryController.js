@@ -10,19 +10,15 @@ const categoryController = {
     })
   },
 
-  postCategory: (req, res) => {
-    if (!req.body.name) {
-      req.flash('error_messages', 'name didn\'t exist')
-      return res.redirect('back')
-    } else {
-      return Category.create({
-        name: req.body.name
-      })
-        .then((category) => {
-          // category 沒有使用到 但方便查看
-          res.redirect('/admin/categories')
-        })
-    }
+  postCategory: (req, res, next) => {
+    categoryService.postCategory(req, res, (data) => {
+      if (data.status === 'error') {
+        req.flash('error_messages', data.message)
+        return res.redirect('back')
+      }
+      req.flash('success_messages', data.message)
+      return res.redirect('/admin/categories')
+    })
   },
   putCategory: (req, res) => {
     if (!req.body.name) {
