@@ -1,3 +1,7 @@
+// 引入 multer 並設定上傳資料夾
+const multer = require('multer')
+const upload = multer({ dest: 'temp/' })
+
 const express = require('express')
 const router = express.Router()
 
@@ -10,6 +14,9 @@ router.get('/admin/restaurants', adminController.getRestaurants)
 router.get('/admin/restaurants/:id', adminController.getRestaurant)
 
 router.get('/admin/categories', categoryController.getCategories)
+
+// 定義路由
+router.post('/admin/restaurants', upload.single('image'), adminController.postRestaurant)
 
 router.delete('/admin/restaurants/:id', adminController.deleteRestaurant)
 
